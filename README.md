@@ -69,13 +69,14 @@ NEXUS_USER_PWD="n3x02"
 NEXUS_DWLD_URL="https://download.sonatype.com/nexus/3"
 NEXUS_INST_FILE="nexus-3.60.0-02-unix.tar.gz"
 NEXUS_VERSION="nexus-3.60.0-02"
+NEXUS_INIT_PWD="$NEXUS_INST_DIR/sonatype-work/nexus3/admin.password"
 
 #--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#
 ######### Somente mexa nas linhas abaixo se você souber o que está fazendo ##########
 #--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#
 
 # roda um update, caso necessário
-sudo apt-get update -y
+sudo apt-get update
 
 # verificar se o nexus já está instalado, caso sim, aborta o processo de instalação
 # (checagem precisa de melhorias para evitar casos de instalações quebradas por conta de erros)
@@ -83,30 +84,34 @@ if [ -d "$NEXUS_INST_DIR/$NEXUS_INST_FOLDER" ]; then
     echo "Provisionamento ja realizado..."
 else
     # instala o JDK - dependencia do nexus
-    sudo apt-get install openjdk-8-jdk -y
-    sudo apt-get install wget -y
+    sudo apt-get install openjdk-8-jdk --yes
+    sudo apt-get install wget --yes
     # instala o expect para uso configurar o usuário/senha do nexus
-    sudo apt-get install expect -y
+    sudo apt-get install expect --yes
     sudo useradd -d $NEXUS_INST_DIR/$NEXUS_INST_FOLDER -s /bin/bash $NEXUS_USER
     sudo /usr/bin/expect /vagrant/expect-nexus $NEXUS_USER $NEXUS_USER_PWD
-    wget -q $NEXUS_DWLD_URL/$NEXUS_INST_FILE
-    cd $NEXUS_INST_DIR ; sudo tar xzvf /vagrant/$NEXUS_INST_FILE ; cd -
-    sudo mv $NEXUS_INST_DIR/$NEXUS_VERSION $NEXUS_INST_DIR/$NEXUS_INST_FOLDER
+    echo "Baixando pacote do Nexus..."
+    if [ ! -f "/vagrant/$NEXUS_INST_FILE" ]; then
+        wget $NEXUS_DWLD_URL/$NEXUS_INST_FILE -O /vagrant/$NEXUS_INST_FILE
+    fi
+    if [ -f "/vagrant/$NEXUS_INST_FILE" ]; then
+        cd $NEXUS_INST_DIR ; sudo tar xzvf /vagrant/$NEXUS_INST_FILE ; cd -
+        sudo mv $NEXUS_INST_DIR/$NEXUS_VERSION $NEXUS_INST_DIR/$NEXUS_INST_FOLDER
 
-    sudo cat <<EOT >> /etc/security/limits.d/$NEXUS_USER.conf
+        sudo cat <<EOT >> /etc/security/limits.d/$NEXUS_USER.conf
 $NEXUS_USER - nofile 65536
 EOT
 
-    # ajusta parametros de memória que a JVM para o nexus irá usar
-    sudo sed -i '/\-Xms/c\\-Xms512m' $NEXUS_INST_DIR/$NEXUS_INST_FOLDER/bin/nexus.vmoptions
-    sudo sed -i '/\-Xmx/c\\-Xmx512m' $NEXUS_INST_DIR/$NEXUS_INST_FOLDER/bin/nexus.vmoptions
-    sudo sed -i '/MaxDirectMemorySize/c\-XX:MaxDirectMemorySize=512m' $NEXUS_INST_DIR/$NEXUS_INST_FOLDER/bin/nexus.vmoptions
-    # ajusta o usuário em arquivo de conf do nexus
-    sudo echo "run_as_user=\"$NEXUS_USER\"" > /opt/nexus/bin/nexus.rc
-    # ajusta a permissão dos diretórios dop nexus
-    sudo chown -R $NEXUS_USER:$NEXUS_USER $NEXUS_INST_DIR/$NEXUS_INST_FOLDER $NEXUS_INST_DIR/sonatype-work
-    # cria o arquivo para gerenciar o start/stop do serviço via systemd
-    sudo cat <<EOT >> /etc/systemd/system/nexus.service
+        # ajusta parametros de memória que a JVM para o nexus irá usar
+        sudo sed -i '/\-Xms/c\\-Xms512m' $NEXUS_INST_DIR/$NEXUS_INST_FOLDER/bin/nexus.vmoptions
+        sudo sed -i '/\-Xmx/c\\-Xmx512m' $NEXUS_INST_DIR/$NEXUS_INST_FOLDER/bin/nexus.vmoptions
+        sudo sed -i '/MaxDirectMemorySize/c\-XX:MaxDirectMemorySize=512m' $NEXUS_INST_DIR/$NEXUS_INST_FOLDER/bin/nexus.vmoptions
+        # ajusta o usuário em arquivo de conf do nexus
+        sudo echo "run_as_user=\"$NEXUS_USER\"" > /opt/nexus/bin/nexus.rc
+        # ajusta a permissão dos diretórios dop nexus
+        sudo chown -R $NEXUS_USER:$NEXUS_USER $NEXUS_INST_DIR/$NEXUS_INST_FOLDER $NEXUS_INST_DIR/sonatype-work
+        # cria o arquivo para gerenciar o start/stop do serviço via systemd
+        sudo cat <<EOT >> /etc/systemd/system/nexus.service
 [Unit]
 Description=nexus service
 After=network.target
@@ -124,25 +129,32 @@ TimeoutSec=600
 WantedBy=multi-user.target
 EOT
 
-    # carrega, habilita e ativa o serviço do nexus via systemd
-    sudo systemctl daemon-reload
-    sudo systemctl enable nexus.service
-    sudo systemctl start nexus.service
+        # carrega, habilita e ativa o serviço do nexus via systemd
+        sudo systemctl daemon-reload
+        sudo systemctl enable nexus.service
+        sudo systemctl start nexus.service
 
-    # Finalização
-    echo "Instalação finalizada. Status dos serviços:"
-    echo "==========================================="
-    sudo systemctl status nexus.service
-    echo "==========================================="
-    echo "Caso a saída acima apresente erro, reuna o máximo de informações"
-    echo "(cópia de logs, prints de tela dos erros, cópia do seus arquivos de config)"
-    echo "e entre contato com o autor em ftvieira@pobox.com"
+        # Finalização
+        echo "Instalação finalizada. Aguardando finalizar processo de inicialização..."
+        sleep 10
+        echo "Instalação finalizada. Status dos serviços:"
+        echo "==========================================="
+        sudo systemctl status nexus.service
+        echo "==========================================="
+        echo "Caso a saída acima apresente erro, reuna o máximo de informações"
+        echo "(cópia de logs, prints de tela dos erros, cópia do seus arquivos de config)"
+        echo "e entre contato com o autor em ftvieira@pobox.com"
 
-    initial_pwd = `cat $NEXUS_INST_DIR/sonatype-work/nexus3/admin.password`
-    cat<<EOT
-Senha inicial para acesso ao Nexus (em caso se sucesso na instalação):
-========== Usuário: admin                                   ==========
-========== Senha: $initial_pwd ==========
+        cat<<EOT
+A Senha inicial para acesso ao Nexus pode ser obtida da seguinte forma:
+
+    vagrant ssh
+    cat $NEXUS_INIT_PWD
+
+Copie o conteúdo listado na tela e acesse a interface do Nexus.
+O acesso deve ser feito com o usuário admin e a senha obtida acima.
+Depois é só seguir as instruções para finalizar o processo e alterar a senha.
+
 ----------------------------------------------------------------------
 Para acessar a interface, use:
     http://<ip_da_sua_maquina>:8081
@@ -155,7 +167,9 @@ Para usar o repositório em cache com o docker cli (linha de comando):
         docker run --rm -it 10.0.2.60:8181/debian /bin/bash
     
 EOT
-
+    else
+        echo "Problema no download do pacote do Nexus!"
+    fi
 fi
 ```
 
@@ -172,6 +186,102 @@ expect "ssword:"
 send "$senha\r"
 expect eof
 ```
+
+5. Acessando e configurando o docker proxy no Nexus
+
+   * Usando as instruções dadas no final do processo de instalação da máquina, acesse a interface do Nexus:
+
+   * Tela do Nexus no primeiro acesso. Clique em Sign in no canto superior direito
+
+:::image type="content" source="imgs/acessando_nexus_01.jpg" alt-text="acesso01":::
+
+   * No pop-up que aparecer, você deve informar o usuário e senha para o primeiro acesso (use as informações coletadas durante o processo de instalação)
+
+:::image type="content" source="imgs/acessando_nexus_02.jpg" alt-text="acesso02":::
+
+   * Ao clicar em Sign in no pop-up, o wizard de configuração inicial iniciará para troca de senha e alguns ajustes básicos. Basta seguir as orientações das imagens.
+
+:::image type="content" source="imgs/acessando_nexus_03.jpg" alt-text="acesso03":::
+
+:::image type="content" source="imgs/acessando_nexus_04.jpg" alt-text="acesso04":::
+
+:::image type="content" source="imgs/acessando_nexus_05.jpg" alt-text="acesso05":::
+
+:::image type="content" source="imgs/acessando_nexus_06.jpg" alt-text="acesso06":::
+
+   * Agora vamos para a configuração clicando na engrenagem próxima ao campo de pesquisa no topo da tela.
+
+:::image type="content" source="imgs/configurando_nexus_01.jpg" alt-text="config01":::
+
+   * Primeiro vamos configurar a área de armazenagem para o nosso proxy. Como aqui é apenas um lab,vamos usar a mesma área já existente, apenas criando um novo apontamento. Para um ambiente produtivo a recomendação seria colocar estar área em uma partição, disco ou mesmo storage.
+
+:::image type="content" source="imgs/configurando_nexus_02.jpg" alt-text="config02":::
+
+   * Clique no botão Create Blob Store
+
+:::image type="content" source="imgs/configurando_nexus_03.jpg" alt-text="config03":::
+
+   * Na caixa de seleção escolha a opção File e depois clique em Save
+
+:::image type="content" source="imgs/acessando_nexus_04.jpg" alt-text="config04":::
+
+   * Ao selecionar o tipo, as demais opções serão exibidas. Ajuste como na imagem e clique em Save. (nesta tela poderia ser configurada uma outra área para armazenar o cache, como em ambientes de produção por exemplo).
+
+:::image type="content" source="imgs/acessando_nexus_05.jpg" alt-text="config05":::
+
+:::image type="content" source="imgs/acessando_nexus_06.jpg" alt-text="config06":::
+
+   * É preciso também configurar o Docker Bearer Token. Para isso, no menu do lado esquerdo, vá em Security -> Realms, como mostrado abaixo:
+
+:::image type="content" source="imgs/configurando_nexus_06a.jpg" alt-text="config06a":::
+
+   * No lado esquerdo, clique no símbolo de **+** que está no item Docker Bearer Token. Ao fazer isso, ele passará para a caixa da direita. Para finalizar, clique em Save.
+
+:::image type="content" source="imgs/configurando_nexus_06b.jpg" alt-text="config06b":::
+
+   * No menu a esquerda, clique em Repositories e depois em Create repository.
+
+:::image type="content" source="imgs/configurando_nexus_07.jpg" alt-text="config07":::
+
+   * Na tela que abre escolha a Recipe (Receita) ***docker (proxy)***
+
+:::image type="content" source="imgs/configurando_nexus_08.jpg" alt-text="config08":::
+
+   * Configure os dados do repositório como nas imagens abaixo
+
+:::image type="content" source="imgs/configurando_nexus_10.jpg" alt-text="config10":::
+
+:::image type="content" source="imgs/configurando_nexus_11.jpg" alt-text="config11":::
+
+   * Selecione o Blob Storage que criamos anteriormente
+
+:::image type="content" source="imgs/configurando_nexus_12.jpg" alt-text="config12":::
+
+:::image type="content" source="imgs/configurando_nexus_13.jpg" alt-text="config13":::
+
+   * Para finalizar, clique no botão Create repository
+
+:::image type="content" source="imgs/configurando_nexus_14.jpg" alt-text="config14":::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
