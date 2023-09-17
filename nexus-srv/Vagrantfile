@@ -1,0 +1,22 @@
+
+Vagrant.configure("2") do |config|
+    # imagem a ser usada no setup
+    config.vm.box = "ubuntu/focal64"
+    # hostname da máquina a ser criada
+    config.vm.hostname = "nexus-srv"
+    # configuração do shape da máquina virtual
+    config.vm.provider "virtualbox" do |vb|
+        vb.cpus = "2"
+        vb.memory = "2048"
+    end
+    # configuração do endereço de rede na sub-rede do virtualbox
+    config.vm.network "private_network", ip: "192.168.56.3"
+    # porta usada para acesso ao Nexus Web
+    config.vm.network "forwarded_port", guest: 8081, host: 8081
+    # porta usada para acesso ao repositório docker local
+    config.vm.network "forwarded_port", guest: 8181, host: 8181
+    # compartilhamento via NFS - pode ser compartilhado com outras máquinas 
+    # config.vm.synced_folder ".", "/vagrant", type: "nfs"
+    # script para configuração do ambiente
+    config.vm.provision "shell", path: "provision.sh"
+end

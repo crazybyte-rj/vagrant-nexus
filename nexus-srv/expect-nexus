@@ -1,0 +1,8 @@
+#!/usr/bin/expect
+spawn passwd [lindex $argv 0]
+set senha [lindex $argv 1]
+expect "ssword:"
+send "$senha\r"
+expect "ssword:"
+send "$senha\r"
+expect eof
