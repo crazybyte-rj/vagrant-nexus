@@ -193,7 +193,7 @@ expect eof
 
    * Tela do Nexus no primeiro acesso. Clique em Sign in no canto superior direito
 
-:::image type="content" source="./imgs/acessando_nexus_01.jpg" alt-text="acesso01":::
+![My Image](imgs/acessando_nexus_01.jpg)
 
    * No pop-up que aparecer, você deve informar o usuário e senha para o primeiro acesso (use as informações coletadas durante o processo de instalação)
 
