@@ -197,71 +197,71 @@ expect eof
 
    * No pop-up que aparecer, você deve informar o usuário e senha para o primeiro acesso (use as informações coletadas durante o processo de instalação)
 
-:::image type="content" source="imgs/acessando_nexus_02.jpg" alt-text="acesso02":::
+![My Image](imgs/acessando_nexus_02.jpg)
 
    * Ao clicar em Sign in no pop-up, o wizard de configuração inicial iniciará para troca de senha e alguns ajustes básicos. Basta seguir as orientações das imagens.
 
-:::image type="content" source="imgs/acessando_nexus_03.jpg" alt-text="acesso03":::
+![My Image](imgs/acessando_nexus_03.jpg)
 
-:::image type="content" source="imgs/acessando_nexus_04.jpg" alt-text="acesso04":::
+![My Image](imgs/acessando_nexus_04.jpg)
 
-:::image type="content" source="imgs/acessando_nexus_05.jpg" alt-text="acesso05":::
+![My Image](imgs/acessando_nexus_05.jpg)
 
-:::image type="content" source="imgs/acessando_nexus_06.jpg" alt-text="acesso06":::
+![My Image](imgs/acessando_nexus_06.jpg)
 
    * Agora vamos para a configuração clicando na engrenagem próxima ao campo de pesquisa no topo da tela.
 
-:::image type="content" source="imgs/configurando_nexus_01.jpg" alt-text="config01":::
+![My Image](imgs/configurando_nexus_01.jpg)
 
    * Primeiro vamos configurar a área de armazenagem para o nosso proxy. Como aqui é apenas um lab,vamos usar a mesma área já existente, apenas criando um novo apontamento. Para um ambiente produtivo a recomendação seria colocar estar área em uma partição, disco ou mesmo storage.
 
-:::image type="content" source="imgs/configurando_nexus_02.jpg" alt-text="config02":::
+![My Image](imgs/configurando_nexus_02.jpg)
 
    * Clique no botão Create Blob Store
 
-:::image type="content" source="imgs/configurando_nexus_03.jpg" alt-text="config03":::
+![My Image](imgs/configurando_nexus_03.jpg)
 
    * Na caixa de seleção escolha a opção File e depois clique em Save
 
-:::image type="content" source="imgs/acessando_nexus_04.jpg" alt-text="config04":::
+![My Image](imgs/acessando_nexus_04.jpg)
 
    * Ao selecionar o tipo, as demais opções serão exibidas. Ajuste como na imagem e clique em Save. (nesta tela poderia ser configurada uma outra área para armazenar o cache, como em ambientes de produção por exemplo).
 
-:::image type="content" source="imgs/acessando_nexus_05.jpg" alt-text="config05":::
+![My Image](imgs/acessando_nexus_05.jpg)
 
-:::image type="content" source="imgs/acessando_nexus_06.jpg" alt-text="config06":::
+![My Image](imgs/acessando_nexus_06.jpg)
 
    * É preciso também configurar o Docker Bearer Token. Para isso, no menu do lado esquerdo, vá em Security -> Realms, como mostrado abaixo:
 
-:::image type="content" source="imgs/configurando_nexus_06a.jpg" alt-text="config06a":::
+![My Image](imgs/configurando_nexus_06a.jpg)
 
    * No lado esquerdo, clique no símbolo de **+** que está no item Docker Bearer Token. Ao fazer isso, ele passará para a caixa da direita. Para finalizar, clique em Save.
 
-:::image type="content" source="imgs/configurando_nexus_06b.jpg" alt-text="config06b":::
+![My Image](imgs/configurando_nexus_06b.jpg)
 
    * No menu a esquerda, clique em Repositories e depois em Create repository.
 
-:::image type="content" source="imgs/configurando_nexus_07.jpg" alt-text="config07":::
+![My Image](imgs/configurando_nexus_07.jpg)
 
    * Na tela que abre escolha a Recipe (Receita) ***docker (proxy)***
 
-:::image type="content" source="imgs/configurando_nexus_08.jpg" alt-text="config08":::
+![My Image](imgs/configurando_nexus_08.jpg)
 
    * Configure os dados do repositório como nas imagens abaixo
 
-:::image type="content" source="imgs/configurando_nexus_10.jpg" alt-text="config10":::
+![My Image](imgs/configurando_nexus_10.jpg)
 
-:::image type="content" source="imgs/configurando_nexus_11.jpg" alt-text="config11":::
+![My Image](imgs/configurando_nexus_11.jpg)
 
    * Selecione o Blob Storage que criamos anteriormente
 
-:::image type="content" source="imgs/configurando_nexus_12.jpg" alt-text="config12":::
+![My Image](imgs/configurando_nexus_12.jpg)
 
-:::image type="content" source="imgs/configurando_nexus_13.jpg" alt-text="config13":::
+![My Image](imgs/configurando_nexus_13.jpg)
 
    * Para finalizar, clique no botão Create repository
 
-:::image type="content" source="imgs/configurando_nexus_14.jpg" alt-text="config14":::
+![My Image](imgs/configurando_nexus_14.jpg)
 
 
 
