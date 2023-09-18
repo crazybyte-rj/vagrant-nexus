@@ -22,7 +22,7 @@ sudo apt update && sudo apt install vagrant
      `vagrant plugin install vagrant-vbguest`
 
 2. Inicializar nosso projeto
-   *Crie uma pasta aonde ficarão os arquivos de configuração e inicialize o vagrant nesta pasta:
+   * Crie uma pasta aonde ficarão os arquivos de configuração e inicialize o vagrant nesta pasta:
       * mkdir ~/lab-nexus
       * vagrant init
       (O comando acima apenas cria um arquivo **Vagrantfile** padrão dentro da pasta)
