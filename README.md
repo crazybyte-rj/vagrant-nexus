@@ -1,6 +1,6 @@
 # README
 
-Pequeno laboratório para subir um repositório do Nexus para  atuar como proxy para o Docker Hub.
+Pequeno laboratório de estudos para aprimorar conhecimentos de Vagrant e estudar a ferramenta Nexus como proxy de imagens para o Docker Hub, entre outros recursos.
 
 Foi utilizado o Vagrant com Virtualbox para subir a máquina virtual e foi criado um script para instalar e configurar o Nexus na mesma.
 
