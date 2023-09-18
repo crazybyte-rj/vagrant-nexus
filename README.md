@@ -8,7 +8,7 @@ Foi utilizado o Vagrant com Virtualbox para subir a máquina virtual e foi criad
 
 1. Instalação do Vagrant
    * Acesse [Download Vagrant](https://developer.hashicorp.com/vagrant/downloads?product_intent=vagrant) e escolha o seu Sistema operacional. Aqui vamos usar o ambiente **Linux** como base.
-   * 
+   
    * Para distribuições baseadas em **Debian/Ubuntu**, podemos configurar o repositório com os passos abaixo:
 
 ```bash
