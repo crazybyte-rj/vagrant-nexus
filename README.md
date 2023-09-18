@@ -187,7 +187,7 @@ send "$senha\r"
 expect eof
 ```
 
-5. Acessando e configurando o docker proxy no Nexus
+5. Acessando o Nexus e configurando o docker proxy
 
    * Usando as instruções dadas no final do processo de instalação da máquina, acesse a interface do Nexus:
 
@@ -262,6 +262,159 @@ expect eof
    * Para finalizar, clique no botão Create repository
 
 ![My Image](imgs/configurando_nexus_14.jpg)
+
+   * Agora precisamos criar uma Role para o acesso ao repositório. Afinal não podemos dar acesso de admin para todos que precisarem utilizar o repositório. Basta seguir os passos abaixo:
+
+   * No menu a esquerda, selecione Roles
+
+![My Image](imgs/configurando_nexus_14a.jpg)
+
+   * Depois clique no botão Create role
+
+![My Image](imgs/configurando_nexus_14b.jpg)
+
+   * Preencha os campos indicados. O ***Type*** será **Nexus Role**. Os demais campos podem ter os nomes que desejar.
+
+![My Image](imgs/configurando_nexus_14c.jpg)
+
+   * Na parte de Privileges, no lado esquerdo, coloque o filtro com o nome do repositório criado. No nosso caso, foi docker-proxy.
+
+![My Image](imgs/configurando_nexus_14d.jpg)
+
+   * Procure na lista o privilégio adequado, conforme a imagem e clique no sinal de **+** para jogá-lo para a janela da direita.
+
+![My Image](imgs/configurando_nexus_14e.jpg)
+
+   * Para finalizar, vai para o final da página e clique no botão Save.
+
+![My Image](imgs/configurando_nexus_14f.jpg)
+
+   * Com a Role criada, vamos criar nosso usuário (vamos criar um usuário genérico, mas podem ser criados mais usuários, dependendo das necessidades do ambiente)
+
+   * No menu do lado esquerdo, selecione Users, como mostrado na imagem
+
+![My Image](imgs/configurando_nexus_15.jpg)
+
+   * Selecione Create local user
+
+![My Image](imgs/configurando_nexus_16.jpg)
+
+   * Siga as orientações das imagens abaixo e preencha os campos necessários para a criação do usuário no Nexus.
+
+![My Image](imgs/configurando_nexus_17.jpg)
+
+   * Associe a role que foi criada com o usuário. Caso seu ambiente já possua um servidor Nexus,podem existir muitas roles e, neste caso, você deverá pesquisar a role criada para o repositório. Clique no **>** para mover a role para a janela da direita. Para finalizar, clique em Create local user.
+
+![My Image](imgs/configurando_nexus_18.jpg)
+
+![My Image](imgs/configurando_nexus_19.jpg)
+
+
+6. Configurando e testando o docker cli com nosso repositório (Linux)
+
+   * Para fazer com que o docker cli no Linux possa usar nosso cache e não o Docker Hub diretamente, devemos fazer uma pequena configuração.
+   * Devemos editar ou criar o arquivo ***/etc/docker/daemon.json***, como mostrado abaixo:
+
+```json
+{
+        "insecure-registries": ["<ip_da_sua_maquina>:8181"],
+        "registry-mirrors": ["http://<ip_da_sua_maquina>:8181"]
+}
+```
+   * Após editar ou criar este arquivo, o daemon do docker deve ser reiniciado. No nosso laboratório a máquina cliente roda o Ubuntu 20.04, logo o comando será:
+
+```bash
+sudo systemctl restart docker
+```
+   * Para confirmar que as configurações foram reconhecidas, execute o comando:
+
+```bash
+docker info
+```
+
+   * Nas informações geradas deverá ter um trecho semelhante a este:
+
+```bash
+ Insecure Registries:
+  192.168.1.129:8181
+  127.0.0.0/8
+ Registry Mirrors:
+  http://192.168.1.129:8181/
+```
+
+   * Agora podemos testar nosso repositório. Para isso, teremos que nos autenticar, pois não deixamos o repositório com acesso anônimo. Para isso, vamos executar:
+
+```bash
+docker login -u dockerlogin 192.168.1.129:8181
+```
+
+   * Será pedida a senha que definimos para o usuário e a resposta deverá ser algo semelhante a isso:
+
+![My Image](imgs/configurando_nexus_20.jpg)
+
+   * Após fazer o login, podemos começar a usar nosso repositório.
+   * Vamos começar simplesmente baixando a imagem do ubuntu:
+
+```bash
+docker pull 192.168.1.129:8181/ubuntu
+```
+   * Deverá produzir uma saída semelhante a esta:
+
+![My Image](imgs/configurando_nexus_21.jpg)
+
+   * Para validar que o download da imagem foi realizado pelo nosso cache e que uma cópia da mesma está disponível, vamos ver no Nexus se a imagem do ubuntu está mesmo lá.
+   * Para isso, vamos na interface e clicamos na opção Browse.
+
+![My Image](imgs/configurando_nexus_22.jpg)
+
+   * No menu a esquerda, selecione Browse
+
+![My Image](imgs/configurando_nexus_23.jpg)
+
+   * Na tela que se abre, selecionamos o nosso repositório
+
+![My Image](imgs/configurando_nexus_24.jpg)
+
+   * Será exibida uma estrutura similar a mostrada abaixo
+
+![My Image](imgs/configurando_nexus_25.jpg)
+
+   * Se clicarmos nos botões de **+** ao lado das pastas, veremos a estrutura mostrando que a imagem do ubuntu agora está no nosso cache local
+
+![My Image](imgs/configurando_nexus_26.jpg)
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
