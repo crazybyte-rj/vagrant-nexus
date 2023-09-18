@@ -16,9 +16,9 @@ wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/sha
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 sudo apt update && sudo apt install vagrant
 ```
-       * Ou você pode baixar o binário da versão que desejar
+   * Ou você pode baixar o binário da versão que desejar
 
-       * Após instalar o vagrant, vamos instalar o plugin **vbguest** que traz algumas facilidades. Para isso, execute o comando abaixo:
+   * Após instalar o vagrant, vamos instalar o plugin **vbguest** que traz algumas facilidades. Para isso, execute o comando abaixo:
      `vagrant plugin install vagrant-vbguest`
 
 2. Inicializar nosso projeto
