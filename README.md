@@ -1,4 +1,4 @@
-# README
+# README - versão 1.0
 
 Pequeno laboratório de estudos para aprimorar conhecimentos de Vagrant e estudar a ferramenta Nexus como proxy de imagens para o Docker Hub, entre outros recursos.
 
